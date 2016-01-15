@@ -1,0 +1,21 @@
+{#fos_user_registration_form[username]#}
+<body>
+{{ test }}
+<form method="post" action="{{ path ('check_username_route') }}">
+    <input name="username">
+    <input type="submit" value="Sprawdż username">
+</form>
+
+<form method="post" action="{{ path ('check_email_route') }}">
+    <input name="email">
+    <input type="submit" value="Sprawdż email">
+</form>
+
+<form method="post" action="{{ path ('check_password_route') }}">
+    <input name="username">
+    <input name="password">
+    <input type="submit" value="Sprawdż haslo">
+</form>
+
+
+</body>

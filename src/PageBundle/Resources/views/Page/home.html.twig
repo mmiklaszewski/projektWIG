@@ -1,0 +1,85 @@
+{% extends 'PageBundle::html.html.twig' %}
+
+{% block title %}Strona główna{% endblock %}
+{% block pageTitle %}Strona główna{% endblock %}
+
+{% block pageContainer %}
+
+        <div class="box">
+            <div class="col-lg-12 text-center">
+                <div id="carousel-example-generic" class="carousel slide">
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators hidden-xs">
+                        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+                        <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+                    </ol>
+
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner">
+                        <div class="item active">
+                            <img class="img-responsive img-full" src="{{ asset('bundles/assetsPage/img/slide-1.jpg') }}" alt="">
+                        </div>
+                        <div class="item">
+                            <img class="img-responsive img-full" src="{{ asset('bundles/assetsPage/img/slide-2.jpg') }}" alt="">
+                        </div>
+                        <div class="item">
+                            <img class="img-responsive img-full" src="{{ asset('bundles/assetsPage/img/slide-3.jpg') }}" alt="">
+                        </div>
+                    </div>
+
+                    <!-- Controls -->
+                    <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                        <span class="icon-prev"></span>
+                    </a>
+                    <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                        <span class="icon-next"></span>
+                    </a>
+                </div>
+                <h2 class="brand-before">
+                    <small>Witamy na stronie</small>
+                </h2>
+                <h1 class="brand-name">Ksiazka adresowa</h1>
+                <hr class="tagline-divider">
+                <h2>
+                    <small>
+                        Mateusz <strong>Ryszka</strong> Maciej <strong>Miklaszewski</strong>
+                    </small>
+                </h2>
+            </div>
+        </div>
+
+    <div class="row">
+        <div class="box">
+            <div class="col-lg-12">
+                <hr>
+                <h2 class="intro-text text-center">Ksiazka
+                    <strong>adresowa</strong>
+                </h2>
+                <hr>
+                <img class="img-responsive img-border img-left" src="http://kwchcieszyn.blox.pl/resource/Otwarta_ksiazka.jpg" alt="">
+                <hr class="visible-xs">
+                <p>W Naszej ksiązce adresowy każdy zarejestrowany użytkownik może stworzyć własną grupę kontaktów. Do utworzonej grupy może dodać nieokreśloną ilośc kontaków. Ponadto ma możliwość <p>
+                <p>edycji swoich kontaktow, oraz usunięcia zbędnych pozycji. Inni użytkownicy ksiązki adresowej również mogą dodawać kontatky do grup, jednak edytować i usuwać mogą tylko dodane przez siebie kontakty i grupy.</p>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="box">
+            <div class="col-lg-12">
+                <hr>
+                <h2 class="intro-text text-center">
+                    <strong>Wyszukiwarka</strong>
+                </h2>
+                <hr>
+                <img class="img-responsive img-border img-left" src="http://www.ninjamail.pl/blog/wp-content/uploads/2011/11/search01.png" alt="">
+                <hr class="visible-xs">
+                <p>Strona oferuje bogatą wyszukiwarkę, która za pomocą filtrów może wyszukiwać użytkowników, oraz grupy po różnych danych!</p>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,170 @@
+{% extends 'PageBundle::html.html.twig' %}
+
+{% block title %}Grupy{% endblock %}
+{% block pageTitle %}Lista grup{% endblock %}
+
+{% block pageContainer %}
+    {% set provinces = [
+    { 'value' : 'dolnoslaskie', 'name' : 'Dolnośląskie' },
+    { 'value' : 'kujawsko-pomorskie', 'name' : 'Kujawsko - Pomorskie'},
+    { 'value' : 'lubelskie', 'name' : 'Lubelskie'},
+    { 'value' : 'lubuskie', 'name' : 'Lubuskie'},
+    { 'value' : 'lodzkie', 'name' : 'Łódzkie'},
+    { 'value' : 'malopolskie', 'name' : 'Małopolskie'},
+    { 'value' : 'mazowieckie', 'name' : 'Mazowieckie'},
+    { 'value' : 'opolskie', 'name' : 'Opolskie'},
+    { 'value' : 'podkarpackie', 'name' : 'Podkarpackie'},
+    { 'value' : 'podlaskie', 'name' : 'Podlaskie'},
+    { 'value' : 'pomorskie', 'name' : 'Pomorskie'},
+    { 'value' : 'slaskie', 'name' : 'Śląskie'},
+    { 'value' : 'swietokrzyskie', 'name' : 'Świętokrzyskie'},
+    { 'value' : 'warminsko-mazurskie', 'name' : 'Warmińsko - Mazurskie'},
+    { 'value' : 'wielkopolskie', 'name' : 'Wielkopolskie'},
+    { 'value' : 'zachodnio-pomorskie', 'name' : 'Zachodnio - Pomorskie'},
+    ] %}
+    <div class="box">
+        <div class="col-lg-12 text-center">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>ID
+
+                    </th>
+                    <th>Nazwa grupy</th>
+                    <th>Ilość kontaktów</th>
+                    <th>Pokaż kontakty</th>
+                    <th>Edytuj</th>
+                    <th>Usuń</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for group in groups %}
+                    <tr id="contentRow-{{ group.groupId }}">
+                        <td>{{ group.groupId }}</td>
+                        <td class="{{ group.groupId }}-name">{{ group.groupName }}</td>
+                        <td>{{ group.contacts | length }}</td>
+                        <td>
+                            <button class="showView btn btn-primary" onclick="showView()"><i class="fa fa-eye"></i> Pokaż</button>
+                        </td>
+                        {% if app.user or is_granted('ROLE_ADMIN') %}
+                            <td>
+                                {#<button class="sub showEdit" onclick="showEdit()">Edytuj</button>#}
+                                {% if app.user.username == group.userId or is_granted('ROLE_ADMIN') %}
+                                    <button class="showEdit btn btn-warning" onclick="showEdit()"><i class="fa fa-pencil-square-o"></i> Edytuj</button>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                        {% if app.user %}
+                            <td>
+                                {% if app.user.username == group.userId  or is_granted('ROLE_ADMIN') %}
+                                    <a href="{{ path('remove_group_route', {'id': group.groupId}) }}" class="remove" id="{{ group.groupId }}">
+                                        <button class="btn btn-danger"><i class="fa fa-times"></i> Usuń</button>
+                                    </a>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    </tr>
+                    <tr class="hidden editRow">
+                        <td colspan="6">
+                            <form id="edit_form_{{ group.groupId }}" action="{{ path('edit_group_route') }}" method="POST" class="edit_group_form">
+                                <fieldset class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-12">
+                                                <h4>Grupa</h4>
+                                                <input class="hidden" name="group_id" value="{{ group.groupId }}">
+                                                <label for="group_form_group_id" class="required">Nazwa grupy</label>
+                                                <input type="text" id="group_name" name="group_name" class="form-control" value="{{ group.groupName }}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="alert alert-info" style="display: none;"></div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            {#<input type="submit" value="Edytuj" class="btn btn-lg btn-success" disabled="disabled">#}
+                                            <button type="submit" id="form_submit" disabled="disabled" class="btn btn-lg btn-success">Edytuj</button>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr class="hidden viewRow">
+                        <td colspan="6">
+                            {% for contact in contacts %}
+                                {% if contact.groupId == group  %}
+                                    <table class="table table-bordered table-striped table-hover">
+                                        <tr>
+                                            <td colspan="2">
+                                                <h3>{{ contact.contactName }} {{ contact.contactSurname }}</h3>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2"><h4>Dane Personalne</h4></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Imie</td>
+                                            <td>{{ contact.contactName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Nazwisko</td>
+                                            <td>{{ contact.contactSurname }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2"><h4>Dane Kontaktowe</h4></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Adres e-mail</td>
+                                            <td>{{ contact.contactEmail }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Numer telefonu</td>
+                                            <td>{{ contact.contactPhone }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2"><h4>Dane Adresowe</h4></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Województwo</td>
+                                            <td>
+                                                {% for province in provinces %}
+                                                    {% if contact.contactProvince == province.value %}
+                                                        {{ province.name }}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Miasto</td>
+                                            <td>{{ contact.contactCity }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Ulica</td>
+                                            <td>{{ contact.contactStreet }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Numer domu</td>
+                                            <td>{{ contact.contactHomeNumber }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Kod pocztowy</td>
+                                            <td>{{ contact.contactPostalCode }}</td>
+                                        </tr>
+                                    </table>
+                                    <hr>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{{ asset('bundles/assetsPage/js/custom/groupAjax.js') }}"></script>
+    <script src="{{ asset('bundles/assetsPage/js/custom/acordion.js') }}"></script>
+{% endblock %}

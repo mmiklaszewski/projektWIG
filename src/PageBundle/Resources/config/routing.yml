@@ -1,0 +1,7 @@
+page_homepage:
+    path:     /
+    defaults: { _controller: PageBundle:Template:home }
+
+template:
+    resource: "@PageBundle/Controller/"
+    type: annotation

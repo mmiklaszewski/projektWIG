@@ -1,0 +1,248 @@
+{% extends 'PageBundle::html.html.twig' %}
+
+{% block title %}Dodaj kontakt{% endblock %}
+{% block pageTitle %}Dodaj kontakt{% endblock %}
+
+{% block pageContainer %}
+    <div class="box">
+
+        <div class="col-lg-12 text-center"> {#onsubmit="return validate();"#}
+            {#<form role="form" method="post" name="contact_form" >#}
+            {{ form_start(form,{ 'attr': {'id': 'add_user_form'} }) }}
+            {#{{ form_start(form) }}#}
+            <fieldset class="form-group">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="col-md-12">
+                            <h3>Grupa</h3>
+                            {{ form_label(form.group_id) }}
+                            {{ form_widget(form.group_id, { 'attr': {'class': 'form-control'} }) }}<br />
+                        </div>
+                        <div class="col-md-12">
+                            <h3>Dane personalne</h3>
+                            {{ form_label(form.contact_name) }}
+                            {{ form_widget(form.contact_name, { 'attr': {'class': 'form-control'} }) }}<br />
+                            {{ form_label(form.contact_surname) }}
+                            {{ form_widget(form.contact_surname, { 'attr': {'class': 'form-control'} }) }}<br />
+                        </div>
+                        <div class="col-md-12">
+                            <h3>Dane kontaktowe</h3>
+                            {{ form_label(form.contact_email) }}
+                            {{ form_widget(form.contact_email, { 'attr': {'class': 'form-control'} }) }}<br />
+                            {{ form_label(form.contact_phone) }}
+                            {{ form_widget(form.contact_phone, { 'attr': {'class': 'form-control'} }) }}<br />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="col-md-12">
+                            <h3>Dane adresowe</h3>
+                            {{ form_label(form.contact_province) }}
+                            {{ form_widget(form.contact_province, { 'attr': {'class': 'form-control'} }) }}<br />
+                            {{ form_label(form.contact_city) }}
+                            {{ form_widget(form.contact_city, { 'attr': {'class': 'form-control'} }) }}<br />
+                            {{ form_label(form.contact_street) }}
+                            {{ form_widget(form.contact_street, { 'attr': {'class': 'form-control'} }) }}<br />
+                            {{ form_label(form.contact_home_number) }}
+                            {{ form_widget(form.contact_home_number, { 'attr': {'class': 'form-control'} }) }}<br />
+                            {{ form_label(form.contact_postal_code) }}
+                            {{ form_widget(form.contact_postal_code, { 'attr': {'class': 'form-control'} }) }}<br />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="info" class="alert alert-info" style="display: none"></div>
+                    </div>
+                    <div class="col-md-12">
+                        {{ form_label(form.add) }}
+                        {{ form_widget(form.add, { 'attr': {'class': 'btn btn-primary', 'disabled': 'disabled'}  }) }}
+                        {#{{ form_widget(form.add, { 'attr': {'disabled': 'disabled'}   }) }}#}
+                    </div>
+                </div>
+
+
+            </fieldset>
+            {{ form_end(form) }}
+        </div>
+    </div>
+    {#<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>#}
+    <script>
+        $(document).ready(function(){
+            $("#add_user_form").validate({
+                rules: {
+                    contact_name: {
+                        required: true,
+                        pattern: /^[A-ZĄĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{1,20}$/
+                    },
+                    contact_surname: {
+                        required: true,
+                        pattern: /^[A-ZĄĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{1,20}$/
+                    },
+                    contact_email: {
+                        required: true,
+                        email: true
+                    },
+                    contact_phone: {
+                        required: true,
+                        pattern: /^[56789][0-9]{8}$/
+                    },
+                    contact_province: {
+                        required: true
+                    },
+                    contact_city: {
+                        required: true,
+                        pattern: /^[A-ZĄĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{1,20}$/
+                    },
+                    contact_street: {
+                        required: true,
+                        pattern: /^[A-ZĄĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{1,20}$/
+                    },
+                    contact_home_number: {
+                        required: true,
+                        digits: true
+                    },
+                    contact_postal_code: {
+                        required: true,
+                        pattern: /^[0-9]{2}\-[0-9]{3}$/
+                    }
+                },
+                messages: {
+                    contact_name: {
+                        required: "Pole jest wymagane",
+                        pattern: "Imie musi rozpoczynać się z dużej litery"
+                    },
+                    contact_surname: {
+                        required: "Pole jest wymagane",
+                        pattern: "Naziwsko musi rozpoczynać się z dużej litery"
+                    },
+                    contact_email: {
+                        required: "Pole jest wymagane",
+                        email: "Pole musi zawierać adres email: test@test.pl"
+                    },
+                    contact_phone: {
+                        required: "Pole jest wymagane",
+                        pattern: "Wprowadź poprawny numer telefonu"
+                    },
+                    contact_province: {
+                        required: "Pole jest wymagane"
+                    },
+                    contact_city: {
+                        required: "Pole jest wymagane",
+                        pattern: "Wprowadź poprawnie miasto"
+                    },
+                    contact_street: {
+                        required: "Pole jest wymagane",
+                        pattern: "Wprowadź poprawnie miasto"
+                    },
+                    contact_home_number: {
+                        required: "Pole jest wymagane",
+                        digits: "Numer domu musi być liczbą"
+                    },
+                    contact_postal_code: {
+                        required: "Pole jest wymagane",
+                        pattern: "Kod pocztowy 00-000"
+                    }
+                }
+            });
+
+
+            $('#add_user_form input').on('keyup blur', function () { // fires on every keyup & blur
+                if ($('#add_user_form').valid()) {                   // checks form for validity
+                    $('button.btn').prop('disabled', false);        // enables button
+                } else {
+                    $('button.btn').prop('disabled', 'disabled');   // disables button
+                }
+            });
+
+            $("form").submit(function(e) {
+                e.preventDefault();
+                var $url = $(this).attr('action');
+                var $data = $(this).serialize();
+
+
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    url: $url,
+                    data: $data,
+                    success: function(data){
+                        $("#info").text("Pomyślnie dodano kontakt");
+                        $("#info").show().delay(2000).fadeOut();
+
+
+                    }
+                });
+            })
+        });
+
+        {#&#123;&#35;{% for flashMessage in app.session.flashbag.get('abc') %}&#35;&#125;#}
+        {#&#123;&#35;var flash = {{ flashMessage }};&#35;&#125;#}
+        {#&#123;&#35;{% endfor %}&#35;&#125;#}
+        {#var comf = 0;#}
+
+        {#function validate() {#}
+        {#var txtA = [];#}
+
+        {#var txtArray = [];#}
+
+        {#var txtB = [];#}
+        {#var txtInfo = [];#}
+
+        {#if( document.contact_form.contact_form_contact_name.value != "")#}
+        {#{#}
+        {#comf = 0;#}
+        {#txtInfo.push("<li>Dodano</li>");#}
+        {#//txtArray.push("<li>Brak nazwy</li>");#}
+        {#$("#alert").addClass('hidden');#}
+        {#} else {#}
+        {#comf = 1;#}
+        {#txtArray.push("<li>Brak nazwy</li>");#}
+        {#$("#info").addClass('hidden');#}
+        {#}#}
+
+
+
+        {#if (txtArray.length != 0){#}
+        {#txtA = ["<ul>" + txtArray +  "</ul>"];#}
+        {#document.getElementById("alert").innerHTML = txtA;#}
+        {#$("#alert").removeClass('hidden');#}
+        {#return false;#}
+        {#}#}
+
+        {#if (txtInfo.length != 0){#}
+        {#txtB = ["<ul>" + txtInfo +  "</ul>"];#}
+        {#document.getElementById("info").innerHTML = txtB;#}
+        {#$("#info").removeClass('hidden');#}
+        {#return false;#}
+        {#}#}
+
+
+
+
+
+        {#}#}
+        {#$().ready(function() {#}
+        {#$("form").submit(function(e) {#}
+        {#e.preventDefault();#}
+        {#var $url = $(this).attr('action');#}
+        {#var $data = $(this).serialize();#}
+        {#if (comf == 0){#}
+        {#$.ajax({#}
+        {#type: "POST",#}
+        {#url: $url,#}
+        {#data: $data#}
+        {#}).done(function (result) {#}
+        {#if (result.success) {#}
+        {#//   $('#result').html('<span>Monetary expense correctly saved!<br/> The data are:<br/>id: ' + result.id + '<br/>type: ' + result.type + '<br/>price: ' + result.price + '<br/>comment: ' + result.comment + '</span>');#}
+        {#}#}
+        {#$("#alert").addClass('hidden');#}
+        {#$("#info").addClass('hidden');#}
+        {#$('input[type=text], text').val('');#}
+        {#})#}
+        {#};#}
+        {#});#}
+        {#});#}
+
+    </script>
+
+{% endblock %}

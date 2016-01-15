@@ -1,0 +1,242 @@
+{% extends 'PageBundle::html.html.twig' %}
+
+{% block title %}Kontakty{% endblock %}
+{% block pageTitle %}
+    Lista kontaktów {% if is_granted('ROLE_ADMIN') %}
+    admin
+{% else %}
+    user
+{% endif %}
+{% endblock %}
+
+{% block pageContainer %}
+
+    {% set provinces = [
+    { 'value' : 'dolnoslaskie', 'name' : 'Dolnośląskie' },
+    { 'value' : 'kujawsko-pomorskie', 'name' : 'Kujawsko - Pomorskie'},
+    { 'value' : 'lubelskie', 'name' : 'Lubelskie'},
+    { 'value' : 'lubuskie', 'name' : 'Lubuskie'},
+    { 'value' : 'lodzkie', 'name' : 'Łódzkie'},
+    { 'value' : 'malopolskie', 'name' : 'Małopolskie'},
+    { 'value' : 'mazowieckie', 'name' : 'Mazowieckie'},
+    { 'value' : 'opolskie', 'name' : 'Opolskie'},
+    { 'value' : 'podkarpackie', 'name' : 'Podkarpackie'},
+    { 'value' : 'podlaskie', 'name' : 'Podlaskie'},
+    { 'value' : 'pomorskie', 'name' : 'Pomorskie'},
+    { 'value' : 'slaskie', 'name' : 'Śląskie'},
+    { 'value' : 'swietokrzyskie', 'name' : 'Świętokrzyskie'},
+    { 'value' : 'warminsko-mazurskie', 'name' : 'Warmińsko - Mazurskie'},
+    { 'value' : 'wielkopolskie', 'name' : 'Wielkopolskie'},
+    { 'value' : 'zachodnio-pomorskie', 'name' : 'Zachodnio - Pomorskie'},
+    ] %}
+
+    <div class="box">
+        <div class="col-lg-12 text-center"  id="content">
+            <div id ="contact_list">
+                <table id="table" class="table table-bordered table-striped table-hover">
+                    <thead>
+                    <tr>
+
+                        <th>Imie</th>
+                        <th>Nazwisko</th>
+                        <th>Grupa</th>
+                        {% if app.user or is_granted('ROLE_ADMIN') %}
+                            <th>Edytuj</th>
+                        {% endif %}
+                        <th>Pokaż</th>
+                        {% if app.user or is_granted('ROLE_ADMIN') %}
+                            <th>Usuń</th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for contact in contacts %}
+
+                        <tr id="contentRow-{{ contact.contactId }}">
+
+                            <td class="{{ contact.contactId }}-name">{{ contact.contactName }}</td>
+                            <td class="{{ contact.contactId }}-surname">{{ contact.contactSurname }}</td>
+                            <td class="{{ contact.contactId }}-group">{{ contact.groupId }}</td>
+                            {% if app.user or is_granted('ROLE_ADMIN')%}
+                                <td>
+                                    {#<button class="sub showEdit" onclick="showEdit()">Edytuj</button>#}
+                                    {% if app.user.username == contact.userId or is_granted('ROLE_ADMIN') %}
+                                        <button class="showEdit btn btn-warning" onclick="showEdit()"><i class="fa fa-pencil-square-o"></i> Edytuj</button>
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                            <td>
+                                <button class="showView btn btn-primary" onclick="showView()"><i class="fa fa-eye"></i> Pokaż</button>
+                            </td>
+                            {% if app.user %}
+                                <td>
+                                    {% if app.user.username == contact.userId or is_granted('ROLE_ADMIN') %}
+                                        <a href="{{ path('remove_contact_route', {'id': contact.contactId}) }}" class="remove" id="{{ contact.contactId }}">
+                                            <button class="btn btn-danger"><i class="fa fa-times"></i> Usuń</button>
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                        </tr>
+
+                        <tr class="hidden editRow" id="id{{ contact.contactId }}">
+                            {% if app.user and app.user.username == contact.userId %}
+                                <td colspan="7">
+                                    {#<form id="edit_form_{{ contact.contactId }}" action="{{ path('edit_contact_route') }}" method="POST" onsubmit="return validate();">#}
+                                    <form id="edit_form_{{ contact.contactId }}" class="commentForm" action="{{ path('edit_contact_route') }}">
+                                        <fieldset class="form-group">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="col-md-12">
+                                                        <h4>Grupa</h4>
+                                                        <input class="hidden" name="contact_id" value="{{ contact.contactId }}">
+                                                        <label for="contact_form_group_id" class="required">Nazwa grupy</label>
+                                                        <select id="contact_form_group_id" name="group_id" class="form-control">
+                                                            {% for group in groups %}
+                                                                {% if contact.groupId == group.groupName %}
+                                                                    <option selected value="{{ group.groupName }}" >{{ group.groupName }}</option>
+                                                                {% else %}
+                                                                    <option value="{{ group.groupName }}" >{{ group.groupName }}</option>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <h4>Dane personalne</h4>
+                                                        <label for="contact_form_contact_name">Imie</label>
+                                                        <input type="text" id="contact_form_contact_name" name="contact_name" class="form-control" value="{{ contact.contactName }}"/>
+                                                        </br>
+                                                        <label for="contact_form_contact_surname">Nazwisko</label>
+                                                        <input type="text" id="contact_form_contact_surname" name="contact_surname" class="form-control" value="{{ contact.contactSurname }}"/>
+                                                        </br>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <h4>Dane kontaktowe</h4>
+                                                        <label for="contact_form_contact_email">Adres e-mail</label>
+                                                        <input type="email" id="contact_form_contact_email" name="contact_email" class="form-control" value="{{ contact.contactEmail }}"/>
+                                                        </br>
+                                                        <label for="contact_form_contact_phone">Numer telefonu</label>
+                                                        <input type="tel" id="contact_form_contact_phone" name="contact_phone" class="form-control" value="{{ contact.contactPhone }}"/>
+                                                        </br>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="col-md-12">
+                                                        <h4>Dane adresowe</h4>
+                                                        <label for="contact_form_contact_province" class="required">Województwo</label>
+                                                        <select id="contact_form_contact_province" name="contact_province" class="form-control">
+
+                                                            {% for province in provinces %}
+                                                                {% if contact.contactProvince == province.value %}
+                                                                    <option selected value="{{ province.value }}">{{ province.name }}</option>
+                                                                {% else %}
+                                                                    <option value="{{ province.value }}">{{ province.name }}</option>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </select>
+                                                        <label for="contact_form_contact_city">Miasto</label>
+                                                        <input type="text" id="contact_form_contact_city" name="contact_city" class="form-control" value="{{ contact.contactCity }}"/>
+                                                        </br>
+                                                        <label for="contact_form_contact_street">Ulica</label>
+                                                        <input type="text" id="contact_form_contact_street" name="contact_street" class="form-control" value="{{ contact.contactStreet }}"/>
+                                                        </br>
+                                                        <label for="contact_form_contact_home_number">Numer domu</label>
+                                                        <input type="text" id="contact_form_contact_home_number" name="contact_home_number" class="form-control" value="{{ contact.contactHomeNumber }}"/>
+                                                        </br>
+                                                        <label for="contact_form_contact_postal_code">Kod pocztowy</label>
+                                                        <input type="text" id="contact_form_contact_postal_code" name="contact_postal_code" class="form-control" value="{{ contact.contactPostalCode }}"/>
+                                                        </br>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="alert alert-info" style="display: none;"></div>
+                                                </div>
+                                                <div class="col-md-12">
+
+                                                    <button type="submit" id="form_submit" disabled="disabled" class="btn btn-lg btn-success">Edytuj</button>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </form>
+                                </td>
+                            {% endif %}
+                        </tr>
+
+                        <tr class="hidden viewRow">
+                            <td colspan="7">
+                                <table class="table table-bordered table-striped table-hover">
+                                    <tr>
+                                        <td colspan="2"><h4>Grupa</h4></td>
+                                    </tr>
+                                    <tr>
+                                        <td> Nazwa grupy</td>
+                                        <td class="{{ contact.contactId }}-group">{{ contact.groupId }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"><h4>Dane Personalne</h4></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Imie</td>
+                                        <td class="{{ contact.contactId }}-name">{{ contact.contactName }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nazwisko</td>
+                                        <td class="{{ contact.contactId }}-surname">{{ contact.contactSurname }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"><h4>Dane Kontaktowe</h4></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Adres e-mail</td>
+                                        <td class="{{ contact.contactId }}-email">{{ contact.contactEmail }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Numer telefonu</td>
+                                        <td class="{{ contact.contactId }}-phone">{{ contact.contactPhone }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"><h4>Dane Adresowe</h4></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Województwo</td>
+                                        <td class="{{ contact.contactId }}-province">
+                                            {% for province in provinces %}
+                                                {% if contact.contactProvince == province.value %}
+                                                    {{ province.name }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Miasto</td>
+                                        <td class="{{ contact.contactId }}-city">{{ contact.contactCity }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ulica</td>
+                                        <td class="{{ contact.contactId }}-street">{{ contact.contactStreet }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Numer domu</td>
+                                        <td class="{{ contact.contactId }}-home">{{ contact.contactHomeNumber }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Kod pocztowy</td>
+                                        <td class="{{ contact.contactId }}-code">{{ contact.contactPostalCode }}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{{ asset('bundles/assetsPage/js/custom/contactAjax.js') }}"></script>
+    <script src="{{ asset('bundles/assetsPage/js/custom/acordion.js') }}"></script>
+{% endblock %}
+

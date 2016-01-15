@@ -1,0 +1,383 @@
+{% extends 'PageBundle::html.html.twig' %}
+
+
+{% block title %}Twój profil{% endblock %}
+{% block pageTitle %}Twój profil{% endblock %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block pageContainer %}
+<div class="col-md-8 col-md-offset-2">
+    <div class="login-panel panel panel-default">
+        <div class="panel-heading text-center">
+            <div class="btn-group">
+                <button type="button" class="btn btn-success"><a href="{{ path('fos_user_profile_show') }}" style="text-decoration: none; color: #FFFFFF;">Podgląd profilu</a></button>
+
+                <button type="button" class="btn btn-info"><a href="{{ path('fos_user_profile_edit', {'edit': 'login'}) }}" style="text-decoration: none; color: #FFFFFF;">Zmień login</a></button>
+                <button type="button"class="btn btn-info"><a href="{{ path('fos_user_profile_edit', {'edit': 'email'}) }}" style="text-decoration: none; color: #FFFFFF;">Zmień email</a></button>
+
+                <button type="button" class="btn btn-warning"><a href="{{ path('fos_user_change_password') }}" style="text-decoration: none; color: #FFFFFF;">Zmień hasło</a></button>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+{% if user is defined %}
+    <div class="col-md-8 col-md-offset-2">
+        <div class="login-panel panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Twój profil</h3>
+            </div>
+            <div class="panel-body">
+                <div class="fos_user_user_show">
+                    <table class="table table-bordered table-striped table-hover">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    {{ 'profile.show.username'|trans }}
+                                </td>
+                                <td>
+                                    {{ user.username }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {{ 'profile.show.email'|trans }}
+                                </td>
+                                <td>
+                                    {{ user.email }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Ostatnie logowanie
+                                </td>
+                                <td>
+                                    {{ user.lastLogin | date }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Ilość Twoich grup
+                                </td>
+                                <td>
+                                    {{ groups|length }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Ilosc Twoich kontaktów
+                                </td>
+                                <td>
+                                    {{ contacts|length }}
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% if formProfil is defined and edit == 'login'%}
+    <div class="col-md-8 col-md-offset-2">
+        <div class="login-panel panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Edycja loginu</h3>
+            </div>
+            <div class="panel-body">
+                <div id="alert" class="alert alert-warning alert-dismissable hidden"></div>
+                {{ form_start(formProfil, { 'action': path('fos_user_profile_edit', {'edit': 'login'}), 'attr': { 'class': 'fos_user_profile_edit' } }) }}
+                {#{{ form_widget(formProfil) }}#}
+                <div class="form-group">
+                    {{ form_label(formProfil.username) }}
+                    {{ form_widget(formProfil.username, { 'attr': {'class': 'form-control'} }) }}<br />
+                    {#{{ form_label(formProfil.email) }}#}
+                    {{ form_widget(formProfil.email, { 'attr': {'class': 'form-control hidden'} }) }}<br />
+                    {{ form_label(formProfil.current_password) }}
+                    {{ form_widget(formProfil.current_password, { 'attr': {'class': 'form-control'} }) }}<br />
+                </div>
+                <div class="form-group">
+                    <button type="submit" id="form_submit" disabled="disabled" class="btn btn-md btn-success">{{ 'profile.edit.submit'|trans }}</button>
+                </div>
+                {{ form_end(formProfil) }}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            var $path = $("#path").text();
+            $('.fos_user_profile_edit').validate({
+                rules: {
+                    'email': {
+//                        required: true,
+//                        email:true,
+                      //  remote: $path+'check/email'
+                    },
+                    'username': {
+                        required: true,
+                        pattern: /^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$/,
+                        remote: $path+'check/username'
+                    },
+                    'current_password': {
+                        required: true,
+                        pattern: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$/,
+                        remote: $path+'check/password'
+                    }
+                },
+                messages: {
+                    'email': {
+//                        required: "Pole jest wymagane",
+//                        email: "Wprowadź poprawny adres email",
+                      //  remote: "Ten email jest już zajęty"
+                    },
+                    'username': {
+                        required: "Pole jest wymagane",
+                        pattern: "Wprowadź poprawna nazwę użytkownika",
+                        remote: "Ta nazwa użytkownika jest już zajęta"
+                    },
+                    'current_password': {
+                        required: "Pole jest wymagane",
+                        pattern: "Hasło musi zawierać mała literę, duża literę oraz cyfrę",
+                        remote: "Wprowadzone hasło nie jest poprawne"
+                    }
+                }
+            });
+
+
+            $('.fos_user_profile_edit').on('keyup blur', function () { // fires on every keyup & blur
+                if ($('.fos_user_profile_edit').valid()) {                   // checks form for validity
+                    $('#form_submit').prop('disabled', false);        // enables button
+                } else {
+                    $('#form_submit').prop('disabled', 'disabled');   // disables button
+                }
+            });
+
+            $(".fos_user_profile_edit").submit(function(e) {
+                e.preventDefault();
+                var $url = $(this).attr('action');
+                var $data = $(this).serialize();
+
+
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    url: $url,
+                    data: $data,
+                    success: function(result){
+
+                        $register = '<div class="alert alert-success alert-dismissable">Dane użtkownika zostały zmienione</div>';
+                        $(".panel-title").text('Edycja');
+                        $(".panel-body").html($register);
+
+
+                    }
+                });
+            })
+        });
+    </script>
+{% endif %}
+{% if formProfil is defined and edit == 'email'%}
+    <div class="col-md-8 col-md-offset-2">
+        <div class="login-panel panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Edycja adresu email</h3>
+                {% set edit = '' %}
+            </div>
+            <div class="panel-body">
+                <div id="alert" class="alert alert-warning alert-dismissable hidden"></div>
+                {{ form_start(formProfil, { 'action': path('fos_user_profile_edit', {'edit': 'email'}), 'attr': { 'class': 'fos_user_profile_edit' } }) }}
+                {#{{ form_widget(formProfil) }}#}
+                <div class="form-group">
+                    {#{{ form_label(formProfil.username) }}#}
+                    {{ form_widget(formProfil.username, { 'attr': {'class': 'form-control hidden'} }) }}<br />
+                    {{ form_label(formProfil.email) }}
+                    {{ form_widget(formProfil.email, { 'attr': {'class': 'form-control'} }) }}<br />
+                    {{ form_label(formProfil.current_password) }}
+                    {{ form_widget(formProfil.current_password, { 'attr': {'class': 'form-control'} }) }}<br />
+                </div>
+                <div class="form-group">
+                    <button type="submit" id="form_submit" disabled="disabled" class="btn btn-md btn-success">{{ 'profile.edit.submit'|trans }}</button>
+                </div>
+                {{ form_end(formProfil) }}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            var $path = $("#path").text();
+            $('.fos_user_profile_edit').validate({
+                rules: {
+                    'email': {
+                        required: true,
+                        email:true,
+                        remote: $path+'check/email'
+                    },
+//                    'username': {
+//                        required: true,
+//                        pattern: /^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$/,
+////                        remote: $path+'check/username'
+//                    },
+                    'current_password': {
+                        required: true,
+                        pattern: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$/,
+                        remote: $path+'check/password'
+                    }
+                },
+                messages: {
+                    'email': {
+                        required: "Pole jest wymagane",
+                        email: "Wprowadź poprawny adres email",
+                        remote: "Ten email jest już zajęty"
+                    },
+//                    'username': {
+//                        required: "Pole jest wymagane",
+//                        pattern: "Wprowadź poprawna nazwę użytkownika",
+////                        remote: "Ta nazwa użytkownika jest już zajęta"
+//                    },
+                    'current_password': {
+                        required: "Pole jest wymagane",
+                        pattern: "Hasło musi zawierać mała literę, duża literę oraz cyfrę",
+                        remote: "Wprowadzone hasło nie jest poprawne"
+                    }
+                }
+            });
+
+
+            $('.fos_user_profile_edit').on('keyup blur', function () { // fires on every keyup & blur
+                if ($('.fos_user_profile_edit').valid()) {                   // checks form for validity
+                    $('#form_submit').prop('disabled', false);        // enables button
+                } else {
+                    $('#form_submit').prop('disabled', 'disabled');   // disables button
+                }
+            });
+
+            $(".fos_user_profile_edit").submit(function(e) {
+                e.preventDefault();
+                var $url = $(this).attr('action');
+                var $data = $(this).serialize();
+
+
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    url: $url,
+                    data: $data,
+                    success: function(result){
+
+                        $register = '<div class="alert alert-success alert-dismissable">Dane użtkownika zostały zmienione</div>';
+                        $(".panel-title").text('Edycja');
+                        $(".panel-body").html($register);
+
+
+                    }
+                });
+            })
+        });
+    </script>
+{% endif %}
+{% if formPassword is defined %}
+<div class="col-md-8 col-md-offset-2">
+    <div class="login-panel panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Zmiana hasła</h3>
+        </div>
+        <div class="panel-body">
+            {{ form_start(formPassword, { 'action': path('fos_user_change_password'), 'attr': { 'class': 'fos_user_change_password' } }) }}
+            {#{{ form_widget(formPassword) }}#}
+            <div class="form-group">
+                {{ form_label(formPassword.current_password) }}
+                {{ form_widget(formPassword.current_password, { 'attr': {'class': 'form-control'} }) }}<br />
+                {{ form_label(formPassword.plainPassword.first) }}
+                {{ form_widget(formPassword.plainPassword.first, { 'attr': {'class': 'form-control'} }) }}<br />
+                {{ form_label(formPassword.plainPassword.second) }}
+                {{ form_widget(formPassword.plainPassword.second, { 'attr': {'class': 'form-control'} }) }}<br />
+                </div>
+            <div>
+                {#<input type="submit" value="{{ 'change_password.submit'|trans }}" />#}
+                <button type="submit" id="form_submit" disabled="disabled" class="btn btn-md btn-success">{{ 'change_password.submit'|trans }}</button>
+            </div>
+            {{ form_end(formPassword) }}
+        </div>
+    </div>
+</div>
+
+    <script>
+        $(document).ready(function(){
+            var $path = $("#path").text();
+            $('.fos_user_change_password').validate({
+                rules: {
+                    'current_password': {
+                        required: true,
+                        pattern: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$/,
+                        remote: $path+'check/password'
+                    },
+                    'plainPassword[first]': {
+                        required: true,
+                        pattern: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$/
+                    },
+                    'plainPassword[second]': {
+                        required: true,
+                        pattern: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$/,
+                        equalTo: "#plainPassword_first"
+                    }
+                },
+                messages: {
+                    'current_password': {
+                        required: "Pole jest wymagane",
+                        pattern: "Hasło musi zawierać mała literę, duża literę oraz cyfrę",
+                        remote: "Wprowadzone hasło nie jest poprawne"
+                    },
+                    'plainPassword[first]': {
+                        required: "Pole jest wymagane",
+                        pattern: "Hasło musi zawierać mała literę, duża literę oraz cyfrę"
+                    },
+                    'plainPassword[second]': {
+                        required: "Pole jest wymagane",
+                        pattern: "Hasło musi zawierać mała literę, duża literę oraz cyfrę",
+                        equalTo: "Hasła nie zgadzają się"
+                    }
+                }
+            });
+
+
+            $('.fos_user_change_password').on('keyup blur', function () { // fires on every keyup & blur
+                if ($('.fos_user_change_password').valid()) {                   // checks form for validity
+                    $('#form_submit').prop('disabled', false);        // enables button
+                } else {
+                    $('#form_submit').prop('disabled', 'disabled');   // disables button
+                }
+            });
+
+            $(".fos_user_change_password").submit(function(e) {
+                e.preventDefault();
+                var $url = $(this).attr('action');
+                var $data = $(this).serialize();
+
+
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    url: $url,
+                    data: $data,
+                    success: function(result){
+
+                        $register = '<div class="alert alert-success alert-dismissable">Dane użtkownika zostały zmienione</div>';
+                        $(".panel-title").text('Edycja');
+                        $(".panel-body").html($register);
+
+
+                    }
+                });
+            })
+        });
+    </script>
+{% endif %}
+
+
+
+{% endblock %}

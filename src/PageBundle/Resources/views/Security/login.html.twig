@@ -1,0 +1,76 @@
+{% extends 'PageBundle::html.html.twig' %}
+
+
+{% block title %}Logowanie{% endblock %}
+{% block pageTitle %}Logowanie{% endblock %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block pageContainer %}
+
+    <div class="col-md-4 col-md-offset-4">
+        <div class="login-panel panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Logowanie</h3>
+                {#<ul>#}
+                {#<li>{{ a }}</li>#}
+                {#<li>{{ b }}</li>#}
+                {#<li>{{ c }}</li>#}
+                {#<li>{{ d }}</li>#}
+                {#<li>{{ e }}</li>#}
+                {#<li>{{ f }}</li>#}
+                {#<li>{{ g }}</li>#}
+                {#<li>{{ h }}</li>#}
+                {#<li>{{ test }}</li>#}
+
+                {#</ul>#}
+            </div>
+            <div class="panel-body">
+                {% if app.user %}
+                    <div id="alert" class="alert alert-success alert-dismissable">Pomyślnie zalogowano</div>
+                {% else %}
+                    {% block fos_user_content %}
+                        {% if error %}
+                            <div class="alert alert-warning alert-dismissable">
+                                {{ error.messageKey|trans(error.messageData, 'security') }}
+                            </div>
+                        {% endif %}
+                        <div id="avatar" class="hidden text-center">
+                            <img class= "img-responsive" src="{{asset('bundles/assetsPage/img/avatar.jpg')}}" alt="">
+                            <h3 id="avatar-user"></h3>
+                        </div>
+
+                        <form role="form" id="login_form" action="{{ path("fos_user_security_check") }}" method="post" name="Form">
+                            <fieldset>
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="{{ 'security.login.username'|trans  }}" id="username" name="_username" value="" type="text" autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="{{ 'security.login.password'|trans}}" id="password" name="_password" type="password" value="">
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input id="remember_me" name="_remember_me" type="checkbox" value="Remember Me">{{ 'security.login.remember_me'|trans }}
+                                    </label>
+                                </div>
+                                <!-- Change this to a button or input when using this as a form -->
+                                {#<input type="submit" class="btn btn-lg btn-success btn-block" id="_submit" name="_submit" value="{{ 'security.login.submit'|trans }}" />#}
+                                <button type="submit" id="_submit" disabled="disabled" class="btn btn-lg btn-success btn-block" name="_submit">{{ 'security.login.submit'|trans }}</button>
+                            </fieldset>
+                        </form>
+                        <br/>
+                        <div id="alert" class="alert alert-danger alert-dismissable hidden"></div>
+                            <div class="row">
+                            <a href="{{ path('fos_user_security_login') }}" id="not-me" class="hidden"><button type="button" class="btn btn-primary">Zaloguj sie na inne konto</button></a>
+                            <a href="{{ path('reminder_route') }}"><button type="button" class="btn btn-warning">Przypomnienie hasła</button></a>
+                            </div>
+                    {% endblock fos_user_content %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{{ asset('bundles/assetsPage/js/custom/login.js') }}"></script>
+{% endblock %}

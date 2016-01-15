@@ -1,0 +1,73 @@
+{% if app.user %}
+    {% set mainMenu = [
+    { 'path' : 'home_route', 'name' : 'Strona główna'},
+    ]
+    %}
+    {% set contactMenu = [
+    { 'path': 'add_contact_route', 'name' : 'Dodaj kontakt'},
+    { 'path' : 'show_contact_route', 'name' : 'Pokaz kontakty'},
+    ]
+    %}
+    {% set groupMenu = [
+    { 'path' : 'add_group_route', 'name' : 'Dodaj grupe'},
+    { 'path' : 'show_group_route', 'name' : 'Pokaz grupy'},
+    ] %}
+
+    {% set userMenu = [
+    { 'path' : 'fos_user_profile_show', 'name' : 'Profil'},
+    { 'path' : 'fos_user_security_logout', 'name' : 'Wyloguj'},
+    ] %}
+
+{% else %}
+    {% set mainMenu = [
+    { 'path' : 'home_route', 'name' : 'Strona główna'},
+    { 'path' : 'show_contact_route', 'name' : 'Pokaz kontakty'},
+    { 'path' : 'fos_user_security_login', 'name': 'Logowanie'},
+    { 'path' : 'fos_user_registration_register', 'name' : 'Rejestracja' }
+    ]
+    %}
+{% endif %}
+
+
+<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <span id="path" style="display: none">{{ path('home_route') }}</span>
+    <ul class="nav navbar-nav">
+        {% for item in mainMenu %}
+            <li><a  style="padding: 20px" href="{{ path(item['path']) }}">{{ item['name'] }}</a></li>
+        {% endfor %}
+        {% if app.user %}
+
+            <li class="dropdown">
+                <a style="padding: 20px" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Kontakty <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li role="separator" class="divider"></li>
+                    {% for item in contactMenu %}
+                        <li><a href="{{ path(item['path']) }}">{{ item['name'] }}</a></li>
+                        <li role="separator" class="divider"></li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a style="padding: 20px" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Grupy <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li role="separator" class="divider"></li>
+                    {% for item in groupMenu %}
+                        <li><a href="{{ path(item['path']) }}">{{ item['name'] }}</a></li>
+                        <li role="separator" class="divider"></li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a style="padding: 20px" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Profil <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li role="separator" class="divider"></li>
+                    {% for item in userMenu %}
+                        <li><a href="{{ path(item['path']) }}">{{ item['name'] }}</a></li>
+                        <li role="separator" class="divider"></li>
+                    {% endfor %}
+                </ul>
+            </li>
+
+        {% endif %}
+    </ul>
+</div>

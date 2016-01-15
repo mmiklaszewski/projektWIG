@@ -1,0 +1,104 @@
+{% extends 'PageBundle::html.html.twig' %}
+
+
+{% block title %}Twój profil{% endblock %}
+{% block pageTitle %}Twój profil{% endblock %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block pageContainer %}
+<div class="col-md-8 col-md-offset-2">
+    <div class="login-panel panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Edycja profilu</h3>
+        </div>
+        <div class="panel-body">
+            <div id="alert" class="alert alert-warning alert-dismissable hidden"></div>
+        {{ form_start(form, { 'action': path('fos_user_profile_edit'), 'attr': { 'class': 'fos_user_profile_edit' } }) }}
+        {{ form_widget(form) }}
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" id="form_submit" disabled="disabled" class="btn btn-md btn-success">{{ 'profile.edit.submit'|trans }}</button>
+            <a href="{{ path('fos_user_profile_show') }}">
+                <button>Wróć do profilu</button>
+            </a>
+                </div>
+            </div>
+        {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+    <script>
+        $(document).ready(function(){
+            var $path = $("#path").text();
+
+            $('.fos_user_profile_edit').validate({
+                rules: {
+                    'fos_user_profile_form[email]': {
+                        required: true,
+                        email:true
+                    },
+                    'fos_user_profile_form[username]': {
+                        required: true,
+                        pattern: /^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$/
+                    },
+                    'fos_user_profile_form[current_password]': {
+                        required: true,
+                        pattern: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$/,
+                        remote: $path+'check/password'
+                    }
+                },
+                messages: {
+                    'fos_user_profile_form[email]': {
+                        required: "Pole jest wymagane",
+                        email: "Wprowadź poprawny adres email"
+                    },
+                    'fos_user_profile_form[username]': {
+                        required: "Pole jest wymagane",
+                        pattern: "Wprowadź poprawna nazwę użytkownika"
+                    },
+                    'fos_user_profile_form[current_password]': {
+                        required: "Pole jest wymagane",
+                        pattern: "Hasło musi zawierać mała literę, duża literę oraz cyfrę",
+                        remote: "Podane hasło jest nieprawidłowe"
+                    }
+                }
+            });
+
+
+            $('.fos_user_profile_edit').on('keyup blur', function () { // fires on every keyup & blur
+                if ($('.fos_user_profile_edit').valid()) {                   // checks form for validity
+                    $('#form_submit').prop('disabled', false);        // enables button
+                } else {
+                    $('#form_submit').prop('disabled', 'disabled');   // disables button
+                }
+            });
+
+            $(".fos_user_profile_edit").submit(function(e) {
+                e.preventDefault();
+                var $url = $(this).attr('action');
+                var $data = $(this).serialize();
+
+
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    url: $url,
+                    data: $data,
+                    success: function(result){
+
+                        $register = '<div class="alert alert-success alert-dismissable">Dane użtkownika zostały zmienione</div>';
+                        $(".panel-title").text('Edycja');
+                        $(".panel-body").html($register);
+
+
+                    }
+                });
+            })
+        });
+    </script>
+
+
+
+{% endblock %}

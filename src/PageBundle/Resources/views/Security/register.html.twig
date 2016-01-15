@@ -1,0 +1,18 @@
+{% extends 'PageBundle::html.html.twig' %}
+
+
+{% block title %}Rejestracja{% endblock %}
+{% block pageTitle %}Rejestracja{% endblock %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block pageContainer %}
+
+    {% if app.request.attributes.get('_route') == 'fos_user_registration_register'  %}
+        {% include '::base.html.twig' %}
+    {% endif %}
+    {% block fos_user_content %}
+    {% include "PageBundle:Security:register_content.html.twig" %}
+    {% endblock fos_user_content %}
+
+{% endblock %}

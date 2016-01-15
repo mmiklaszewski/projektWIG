@@ -1,0 +1,22 @@
+{% extends 'PageBundle::html.html.twig' %}
+
+
+{% block title %}Przypominacz{% endblock %}
+{% block pageTitle %}Przypominacz{% endblock %}
+
+
+
+{% block pageContainer %}
+<div class="box" xmlns="http://www.w3.org/1999/html">
+    <h1>reminder | {{ login }} | {{ user }}</h1>
+
+    <form action="{{ path ('answer_reminder_route') }}">
+        {{ user }}
+        <input name="login" value="{{ login }}">
+        <input name="answer" type="text" placeholder="Podaj odpowiedź"/>
+        <button type="submit">Zobacz</button>
+    </form>
+</div>
+
+
+{% endblock %}

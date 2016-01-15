@@ -1,0 +1,189 @@
+{% extends 'PageBundle::html.html.twig' %}
+
+{% block title %}test{% endblock %}
+{% block pageTitle %}
+    {#test {{ welcome }}#}
+
+    {#{{ group }}#}
+
+{% endblock %}
+
+{% block pageContainer %}
+
+
+    {% set provinces = [
+    { 'value' : 'dolnoslaskie', 'name' : 'Dolnośląskie' },
+    { 'value' : 'kujawsko-pomorskie', 'name' : 'Kujawsko - Pomorskie'},
+    { 'value' : 'lubelskie', 'name' : 'Lubelskie'},
+    { 'value' : 'lubuskie', 'name' : 'Lubuskie'},
+    { 'value' : 'lodzkie', 'name' : 'Łódzkie'},
+    { 'value' : 'malopolskie', 'name' : 'Małopolskie'},
+    { 'value' : 'mazowieckie', 'name' : 'Mazowieckie'},
+    { 'value' : 'opolskie', 'name' : 'Opolskie'},
+    { 'value' : 'podkarpackie', 'name' : 'Podkarpackie'},
+    { 'value' : 'podlaskie', 'name' : 'Podlaskie'},
+    { 'value' : 'pomorskie', 'name' : 'Pomorskie'},
+    { 'value' : 'slaskie', 'name' : 'Śląskie'},
+    { 'value' : 'swietokrzyskie', 'name' : 'Świętokrzyskie'},
+    { 'value' : 'warminsko-mazurskie', 'name' : 'Warmińsko - Mazurskie'},
+    { 'value' : 'wielkopolskie', 'name' : 'Wielkopolskie'},
+    { 'value' : 'zachodnio-pomorskie', 'name' : 'Zachodnio - Pomorskie'},
+    ] %}
+
+    {#<div class="box">#}
+        {#<div class="col-lg-12 text-center"  id="content">#}
+            {#<form action="{{ path('search_contact_route') }}">#}
+
+
+                {#<input type="checkbox" name="name" value="name">Imie#}
+                {#<input type="checkbox" name="surname" value="surname">Nazwisko#}
+                {#<input type="checkbox" name="group" value="group">Grupa#}
+                {#<input type="checkbox" name="province" value="province">Województwo#}
+                {#<input type="checkbox" name="city" value="city">Miasto#}
+                {#<input type="checkbox" name="street" value="street">Ulica#}
+                {#<input type="checkbox" name="home_number" value="home_number">Numer domu#}
+                {#<input type="checkbox" name="postal_code" value="postal_code">Kod pocztowy#}
+                {#<input type="checkbox" name="email" value="email">Adres e-mail#}
+                {#<input type="checkbox" name="phone" value="phone">Numer telefonu#}
+                {#<br />#}
+                {#<input id="fraza" name="fraza">#}
+
+
+
+
+                {#<button type="submit">Szukaj</button>#}
+            {#</form>#}
+            {#<span>#}
+
+             {#</span>#}
+        {#</div>#}
+    {#</div>#}
+    <div class="box">
+        <div class="col-lg-6 col-lg-offset-3 text-center"  id="content">
+            {% for c in contacts %}
+                {#{% if name != '' %}#}
+                    {#szuakny#}
+                {#{% else %}#}
+                    {#nie#}
+                {#{% endif %}#}
+
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <th>Nazwa</th>
+                        <th>Wartość</th>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="2">
+                            <h5>Dane personalne</h5>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Imie
+                        </td>
+                        <td>
+                            {{ c.contactName }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Nazwisko
+                        </td>
+                        <td>
+                            {{ c.contactSurname }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Grupa
+                        </td>
+                        <td>
+                            {{ c.groupId }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <h5>Dane adresowe</h5>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Województwo
+                        </td>
+                        <td>
+                            {% for province in provinces %}
+                                {% if c.contactProvince == province.value %}
+                                    {{ province.name }}<br />
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Miasto
+                        </td>
+                        <td>
+                            {{ c.contactCity }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Ulica
+                        </td>
+                        <td>
+                            {{ c.contactStreet }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Numer domu
+                        </td>
+                        <td>
+                            {{ c.contactHomeNumber }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Kod pocztowy
+                        </td>
+                        <td>
+                            {{ c.contactPostalCode }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <h5>Dane kontaktowe</h5>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Adres e-mail
+                        </td>
+                        <td>
+                            {{ c.contactEmail }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Telefon
+                        </td>
+                        <td>
+                            {{ c.contactPhone }}
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            {% endfor %}
+
+        </div>
+    </div>
+
+
+<script>
+
+</script>
+
+{% endblock %}
